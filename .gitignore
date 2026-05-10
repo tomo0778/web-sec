@@ -4,6 +4,8 @@ CLAUDE.md
 AGENTS.md
 .claude/
 
+docs/*
+
 app.db
 
 # dependencies

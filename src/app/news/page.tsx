@@ -24,7 +24,7 @@ const NewsPage: React.FC = () => {
   const [region, setRegion] = useState<Region>(Region.OSAKA);
   const regionDisplayName = useMemo(() => regionDisplayNames[region], [region]);
 
-  // useSearchParams で URL クエリパラメータを直接取得（useState + useEffect 不要）
+  // useSearchParams で URL クエリパラメータを直接取得
   const searchParams = useSearchParams();
   const name = searchParams.get("name"); // 💀 サニタイズ（無害化）せずに値を取得
 
