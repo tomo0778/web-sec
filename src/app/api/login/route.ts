@@ -41,7 +41,7 @@ export const POST = async (req: NextRequest) => {
     }
 
     // パスワードの検証
-    // ✍ bcrypt でハッシュ化したパスワードを検証ように書き換えよ。
+    // ✍ bcrypt でハッシュ化したパスワードを検証するように書き換えよ。
     const isValidPassword = user.password === loginRequest.password;
     if (!isValidPassword) {
       const res: ApiResponse<null> = {

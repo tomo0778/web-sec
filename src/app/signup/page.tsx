@@ -52,7 +52,7 @@ const Page: React.FC = () => {
       formMethods.clearErrors("root");
     };
 
-  // ログイン完了後のリダイレクト処理
+  // サインアップ完了後のリダイレクト処理
   useEffect(() => {
     if (isSignUpCompleted) {
       router.replace(`/login?${c_Email}=${formMethods.getValues(c_Email)}`);

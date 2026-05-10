@@ -19,7 +19,7 @@ export const GET = async (req: NextRequest) => {
       cookieStore.set(cKey, id, {
         path: "/",
         maxAge: sessionMaxAge,
-        // httpOnly: true, // 💀 コメントアウトするとXSS攻撃で窃取される可能性あり
+        // httpOnly: true, // 💀 コメントアウトしているとXSS攻撃で窃取される可能性あり
         sameSite: "strict", // 💀 "none" にするとCSRF脆弱性
         secure: false,
       });

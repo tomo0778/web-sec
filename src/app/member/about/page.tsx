@@ -13,6 +13,7 @@ import type { About } from "@/app/_types/About";
 import { aboutSchema } from "@/app/_types/About";
 import { twMerge } from "tailwind-merge";
 import { AboutView } from "@/app/_components/AboutView";
+import NextLink from "next/link";
 
 const Page: React.FC = () => {
   const c_AboutSlug = "aboutSlug";
@@ -42,10 +43,7 @@ const Page: React.FC = () => {
     });
   };
 
-  const publicState =
-    watchedSlug && !fieldErrors.aboutSlug?.message
-      ? `/about/${watchedSlug} で公開されます。`
-      : "公開されません（有効なパスが未設定です）";
+  const notPublishedText = "公開されません（有効なパスが未設定です）";
 
   useEffect(() => {
     if (isInitialized) return;
@@ -133,7 +131,19 @@ const Page: React.FC = () => {
           <label htmlFor={c_AboutSlug} className="mb-1 block">
             <div className="flex items-center gap-x-2">
               <div className="font-bold">公開URL</div>
-              <div className="text-sm text-gray-500">{publicState}</div>
+              <div className="text-sm text-gray-500">
+                {watchedSlug && !fieldErrors.aboutSlug?.message ? (
+                  <NextLink
+                    href={`/about/${watchedSlug}`}
+                    target="_blank"
+                    className="text-blue-500 hover:underline"
+                  >
+                    /about/{watchedSlug}
+                  </NextLink>
+                ) : (
+                  notPublishedText
+                )}
+              </div>
             </div>
           </label>
           <TextInputField

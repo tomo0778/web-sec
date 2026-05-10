@@ -1,12 +1,15 @@
 import NextLink from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCode } from "@fortawesome/free-solid-svg-icons";
+import { faCode, faIdCard } from "@fortawesome/free-solid-svg-icons";
+import { prisma } from "@/libs/prisma";
+
+export const dynamic = "force-dynamic";
 
 const links = [
   {
     href: "/news",
     label: "ニュース",
-    info: "Cookie超入門、SWR超入門、DB Seeding入門、XSS脆弱性",
+    info: "Cookie超入門、SWR超入門、DB Seeding入門、XSS脆弱性（反射型）",
   },
   {
     href: "/shop",
@@ -30,7 +33,13 @@ const links = [
   },
 ];
 
-const Page: React.FC = () => {
+const Page = async () => {
+  const publicProfiles = await prisma.user.findMany({
+    where: { aboutSlug: { not: null } },
+    select: { name: true, aboutSlug: true },
+    orderBy: { name: "asc" },
+  });
+
   return (
     <main>
       <div className="text-2xl font-bold">Main</div>
@@ -44,6 +53,29 @@ const Page: React.FC = () => {
             <div className="text-xs text-slate-600">※ {info}</div>
           </div>
         ))}
+      </div>
+
+      <div className="mt-6 text-lg font-bold">公開プロフィール</div>
+      <div className="mt-2 ml-2 gap-y-2">
+        {publicProfiles.length === 0 ? (
+          <div className="text-sm text-slate-400">
+            公開プロフィールはまだありません。ログインして /member/about
+            でスラグを設定してください。
+          </div>
+        ) : (
+          publicProfiles.map(({ name, aboutSlug }) => (
+            <div key={aboutSlug} className="flex items-center">
+              <FontAwesomeIcon icon={faIdCard} className="mr-1.5" />
+              <NextLink
+                href={`/about/${aboutSlug}`}
+                className="mr-2 hover:underline"
+              >
+                {name} のプロフィール
+              </NextLink>
+              <div className="text-xs text-rose-400">※ XSS脆弱性（蓄積型）</div>
+            </div>
+          ))
+        )}
       </div>
     </main>
   );

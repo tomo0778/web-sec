@@ -13,7 +13,7 @@ export const signupServerAction = async (
 ): Promise<ServerActionResponse<UserProfile | null>> => {
   try {
     // 入力検証
-    // 💀 現状では日本語のPWも受入れてしまう -> SignupRequest のバリデーション見直し
+    // 💀 現状では日本語のPWも受け入れてしまう -> SignupRequest のバリデーション見直し
     const payload = signupRequestSchema.parse(signupRequest);
 
     // 💡スパム登録対策（1秒遅延）

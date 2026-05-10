@@ -52,7 +52,7 @@ const Page: React.FC = () => {
     fetchProducts();
   }, []);
 
-  // カート情報の取得
+  // カートアイテムの一覧を取得
   const cartItems: CartItem[] = cart?.success ? cart.payload : [];
 
   // カートの商品数量の更新（追加・減少）
