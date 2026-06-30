@@ -5,7 +5,7 @@ import type { UserProfile } from "@/app/_types/UserProfile";
 import type { ApiResponse } from "@/app/_types/ApiResponse";
 import { NextResponse, NextRequest } from "next/server";
 import { createSession } from "@/app/api/_helper/createSession";
-
+import bcrypt from "bcrypt";
 // キャッシュを無効化して毎回最新情報を取得
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -40,7 +40,10 @@ export const POST = async (req: NextRequest) => {
 
     // パスワードの検証
     // ✍ bcrypt でハッシュ化したパスワードを検証するように書き換えよ。
-    const isValidPassword = user.password === loginRequest.password;
+    const isValidPassword = await bcrypt.compare(
+      loginRequest.password,
+      user.password
+    );
     if (!isValidPassword) {
       const res: ApiResponse<null> = {
         success: false,

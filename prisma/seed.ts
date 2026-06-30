@@ -4,6 +4,7 @@ import { v4 as uuid } from "uuid";
 import { prisma } from "@/libs/prisma";
 import { Role, Region } from "@/generated/prisma/enums";
 import { UserSeed, userSeedSchema } from "../src/app/_types/UserSeed";
+import bcrypt from "bcrypt";
 
 const main = async () => {
   console.log("Seeding database...");
@@ -70,16 +71,21 @@ const main = async () => {
   await prisma.cartItem.deleteMany();
 
   // ユーザ（user）テーブルにテストデータを挿入
-  await prisma.user.createMany({
-    data: userSeeds.map((userSeed) => ({
+  const users = await Promise.all(
+    userSeeds.map(async (userSeed) => ({
       id: uuid(),
       name: userSeed.name,
-      password: userSeed.password,
+      password: await bcrypt.hash(userSeed.password, 10),
       role: userSeed.role,
       email: userSeed.email,
       aboutSlug: userSeed.aboutSlug || null,
       aboutContent: userSeed.aboutContent || "",
     })),
+  );
+
+
+  await prisma.user.createMany({
+    data: users,
   });
 
   // 商品（product）テーブルにテストデータを挿入

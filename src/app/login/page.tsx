@@ -22,6 +22,7 @@ const Page: React.FC = () => {
 
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isLoginCompleted, setIsLoginCompleted] = useState(false);
 
@@ -143,13 +144,26 @@ const Page: React.FC = () => {
             onChange={clearRootOnChange(onPasswordChange)}
             id={c_Password}
             placeholder="*****"
-            type="password"
+            type={showPassword ? "text" : "password"}
             disabled={isPending || isLoginCompleted}
             error={!!fieldErrors.password}
             autoComplete="off"
           />
           <ErrorMsgField msg={fieldErrors.password?.message} />
           <ErrorMsgField msg={fieldErrors.root?.message} />
+        </div>
+
+        <div className="mt-2 flex items-center gap-2">
+          <input
+            id="show-password"
+            type="checkbox"
+            checked={showPassword}
+            onChange={(e) => setShowPassword(e.target.checked)}
+            disabled={isPending || isLoginCompleted}
+          />
+          <label htmlFor="show-password">
+            パスワードを表示する
+          </label>
         </div>
 
         <Button

@@ -25,6 +25,7 @@ const Page: React.FC = () => {
   const router = useRouter();
 
   const [isPending, startTransition] = useTransition();
+  const [showPassword, setShowPassword] = useState(false);
   const [isSignUpCompleted, setIsSignUpCompleted] = useState(false);
 
   // フォーム処理関連の準備と設定
@@ -133,13 +134,26 @@ const Page: React.FC = () => {
             onChange={clearRootOnChange(onPasswordChange)}
             id={c_Password}
             placeholder="*****"
-            type="password"
+            type={showPassword ? "text" : "password"}
             disabled={isPending || isSignUpCompleted}
             error={!!fieldErrors.password}
             autoComplete="off"
           />
           <ErrorMsgField msg={fieldErrors.password?.message} />
           <ErrorMsgField msg={fieldErrors.root?.message} />
+        </div>
+
+        <div className="mt-2 flex items-center gap-2">
+          <input
+            id="show-password"
+            type="checkbox"
+            checked={showPassword}
+            onChange={(e) => setShowPassword(e.target.checked)}
+            disabled={isPending || isSignUpCompleted}
+          />
+          <label htmlFor="show-password">
+            パスワードを表示する
+          </label>
         </div>
 
         <Button
