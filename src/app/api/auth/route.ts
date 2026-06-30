@@ -1,24 +1,17 @@
 import { prisma } from "@/libs/prisma";
 import type { UserProfile } from "@/app/_types/UserProfile";
 import type { ApiResponse } from "@/app/_types/ApiResponse";
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { verifySession } from "@/app/api/_helper/verifySession";
-import { verifyJwt } from "@/app/api/_helper/verifyJwt";
-import { AUTH } from "@/config/auth";
 
 // キャッシュを無効化して常に最新情報を取得
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 export const revalidate = 0;
 
-export const GET = async (req: NextRequest) => {
+export const GET = async () => {
   try {
-    let userId: string | null = "";
-    if (AUTH.isSession) {
-      userId = await verifySession(); // セッションベース認証
-    } else {
-      userId = await verifyJwt(req); // トークンベース認証
-    }
+    const userId = await verifySession();
 
     if (!userId) {
       const res: ApiResponse<null> = {

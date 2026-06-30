@@ -48,13 +48,9 @@ const Page: React.FC = () => {
   useEffect(() => {
     if (isInitialized) return;
     const fetchAbout = async () => {
-      const jwt = localStorage.getItem("jwt");
-      const headers: HeadersInit = {};
-      if (jwt) headers["Authorization"] = `Bearer ${jwt}`;
       const res = await fetch(ep, {
         credentials: "same-origin",
         cache: "no-store",
-        headers,
       });
       const data: ApiResponse<About> = await res.json();
       console.log("About ページの情報取得結果:", data);
@@ -75,15 +71,10 @@ const Page: React.FC = () => {
 
   // フォームの送信処理
   const onSubmit = async (formValues: About) => {
-    const jwt = localStorage.getItem("jwt");
-    const headers: HeadersInit = {};
-    if (jwt) headers["Authorization"] = `Bearer ${jwt}`;
-
     const res = await fetch(ep, {
       method: "POST",
       credentials: "same-origin",
       cache: "no-store",
-      headers,
       body: JSON.stringify(formValues),
     });
 
