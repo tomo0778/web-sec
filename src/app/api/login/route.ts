@@ -6,6 +6,11 @@ import type { ApiResponse } from "@/app/_types/ApiResponse";
 import { NextResponse, NextRequest } from "next/server";
 import { createSession } from "@/app/api/_helper/createSession";
 import bcrypt from "bcrypt";
+import {
+  checkLoginRateLimit,
+  recordFailedLogin,
+  clearFailedLogin,
+} from "@/libs/loginRateLimit";
 // キャッシュを無効化して毎回最新情報を取得
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -24,11 +29,22 @@ export const POST = async (req: NextRequest) => {
     }
     const loginRequest = result.data;
 
+    const rateLimit = checkLoginRateLimit(loginRequest.email);
+
+    if (!rateLimit.allowed) {
+      const res: ApiResponse<null> = {
+        success: false,
+        payload: null,
+        message: `ログイン試行回数が多すぎます。${rateLimit.remainingSeconds}秒後に再度お試しください。`,
+      };
+
+      return NextResponse.json(res);
+    }
+
     const user = await prisma.user.findUnique({
       where: { email: loginRequest.email },
     });
     if (!user) {
-      // 💀 このアカウント（メールアドレス）の有効無効が分かってしまう。
       const res: ApiResponse<null> = {
         success: false,
         payload: null,
@@ -45,6 +61,7 @@ export const POST = async (req: NextRequest) => {
       user.password
     );
     if (!isValidPassword) {
+      recordFailedLogin(loginRequest.email);
       const res: ApiResponse<null> = {
         success: false,
         payload: null,

@@ -4,7 +4,7 @@
 // （ /api/signup のようなAPIエンドポイントを実装する必要がない ）
 
 import React, { useState, useEffect, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupRequestSchema, SignupRequest } from "@/app/_types/SignupRequest";
 import { TextInputField } from "@/app/_components/TextInputField";
@@ -35,6 +35,10 @@ const Page: React.FC = () => {
     resolver: zodResolver(signupRequestSchema),
   });
   const fieldErrors = formMethods.formState.errors;
+  const watchedPassword = useWatch({
+    control: formMethods.control,
+    name: c_Password,
+  });
 
   // ルートエラー（サーバサイドで発生した認証エラー）の表示設定の関数
   const setRootError = (errorMsg: string) => {
@@ -66,6 +70,35 @@ const Page: React.FC = () => {
       console.log("サインアップ完了");
     }
   }, [formMethods, isSignUpCompleted, router]);
+
+  const getPasswordStrength = (password: string) => {
+    let score = 0;
+
+    if (password.length >= 8) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[a-z]/.test(password)) score++;
+    if (/\d/.test(password)) score++;
+    if (/[^A-Za-z0-9]/.test(password)) score++;
+
+    if (score <= 2)
+      return {
+        text: "弱い",
+        color: "text-red-500",
+      };
+
+    if (score <= 4)
+      return {
+        text: "普通",
+        color: "text-yellow-500",
+      };
+
+    return {
+      text: "強い",
+      color: "text-green-600",
+    };
+  };
+
+  const strength = getPasswordStrength(watchedPassword || "");
 
   // フォームの送信処理
   const onSubmit = async (signupRequest: SignupRequest) => {
@@ -145,6 +178,11 @@ const Page: React.FC = () => {
             autoComplete="off"
           />
           <ErrorMsgField msg={fieldErrors.password?.message} />
+          {watchedPassword && (
+            <div className={`mt-1 text-sm ${strength.color}`}>
+              パスワード強度：{strength.text}
+            </div>
+          )}
           <ErrorMsgField msg={fieldErrors.root?.message} />
         </div>
 

@@ -24,7 +24,7 @@ export const DELETE = async () => {
         httpOnly: true,
         sameSite: "strict",
         maxAge: 0, // 削除のため
-        secure: false, // 本番では true に
+        secure: process.env.NODE_ENV === "production"
       });
     }
 

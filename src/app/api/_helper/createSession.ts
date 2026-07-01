@@ -11,9 +11,6 @@ export const createSession = async (
   userId: string,
   tokenMaxAgeSeconds: number,
 ): Promise<string> => {
-  // 💀 当該ユーザのセッションが既にDBに存在するなら消す処理を入れるべき
-  // await prisma.session.deleteMany({ where: { userId: user.id } });
-  // 👆 ただし、これだと全ての端末のセッションが無効になる ✍ どうすればよいか考えてみよう。
   const session = await prisma.session.create({
     data: {
       id: crypto.randomUUID(),
@@ -23,13 +20,12 @@ export const createSession = async (
   });
 
   const cookieStore = await cookies();
-  // 💀 session_id というクッキー名が典型的すぎて狙われやすい（XSSでの標的）
   cookieStore.set("session_id", session.id, {
     path: "/",
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: "strict",
     maxAge: tokenMaxAgeSeconds,
-    secure: false, // 💀 secure: false は開発用。deploy 時は要切替！
+    secure: process.env.NODE_ENV === "production",
   });
 
   return session.id;
