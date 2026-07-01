@@ -21,6 +21,7 @@ const Page: React.FC = () => {
   const c_Name = "name";
   const c_Email = "email";
   const c_Password = "password";
+  const c_ConfirmPassword = "confirmPassword";
 
   const router = useRouter();
 
@@ -46,6 +47,10 @@ const Page: React.FC = () => {
   // ルートエラーのクリア用 onChange ハンドラ合成
   const { onChange: onEmailChange, ...emailRegister } = formMethods.register(c_Email);
   const { onChange: onPasswordChange, ...passwordRegister } = formMethods.register(c_Password);
+  const {
+    onChange: onConfirmPasswordChange,
+    ...confirmPasswordRegister
+  } = formMethods.register(c_ConfirmPassword);
   const clearRootOnChange =
     (originalOnChange: React.ChangeEventHandler<HTMLInputElement>) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,6 +146,25 @@ const Page: React.FC = () => {
           />
           <ErrorMsgField msg={fieldErrors.password?.message} />
           <ErrorMsgField msg={fieldErrors.root?.message} />
+        </div>
+
+        <div>
+          <label htmlFor={c_ConfirmPassword} className="mb-2 block font-bold">
+            確認用パスワード
+          </label>
+
+          <TextInputField
+            {...confirmPasswordRegister}
+            onChange={clearRootOnChange(onConfirmPasswordChange)}
+            id={c_ConfirmPassword}
+            placeholder="*****"
+            type={showPassword ? "text" : "password"}
+            disabled={isPending || isSignUpCompleted}
+            error={!!fieldErrors.confirmPassword}
+            autoComplete="off"
+          />
+
+          <ErrorMsgField msg={fieldErrors.confirmPassword?.message} />
         </div>
 
         <div className="mt-2 flex items-center gap-2">
