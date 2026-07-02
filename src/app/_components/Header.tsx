@@ -26,7 +26,7 @@ export const Header: React.FC = () => {
           <div>
             <NextLink href="/">
               <FontAwesomeIcon icon={faChalkboardUser} className="mr-1.5" />
-              WebSecPlayground
+              WebSec
             </NextLink>
             <span className="ml-1 text-xs font-normal">
               - Session Auth
